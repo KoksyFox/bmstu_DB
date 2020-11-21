@@ -36,11 +36,11 @@ cursor.execute('''CREATE TABLE Gyms(
 cursor.execute('''alter table Visitors add constraint name check(name ~*'^[a-z]+$')''')
 conn.commit()
 
-cursor.execute(''' copy Visitors from 'C:\labs\DB\people.csv' delimiter ',' csv''')
+cursor.execute(''' copy Visitors from 'C:/repositories/bmstu_DB/lab1/people.csv' delimiter ',' csv''')
 
-cursor.execute(''' copy Abonements from 'C:\labs\DB\cards.csv' delimiter ',' csv''')
+cursor.execute(''' copy Abonements from 'C:/repositories/bmstu_DB/lab1/cards.csv' delimiter ',' csv''')
 
-cursor.execute(''' copy Gyms from 'C:\labs\DB\gyms.csv' delimiter ',' csv''')
+cursor.execute(''' copy Gyms from 'C:/repositories/bmstu_DB/lab1/gyms.csv' delimiter ',' csv''')
 
 conn.commit()
 

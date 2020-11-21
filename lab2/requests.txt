@@ -1,0 +1,21 @@
+1. Инструкция SELECT, использующая предикат сравнения
+    Запрос выводит список посетителей женского пола, старше 25 лет и тип их абонемента:
+    SELECT DISTINCT Visitors.name,Visitors.sex,Visitors.age, Abonements.type
+    FROM Visitors JOIN Abonements ON Abonements.ID = Visitors.IDcard
+    WHERE Visitors.sex = 'f' AND Visitors.age > 25
+
+2. Инструкция SELECT, использующая предикат BETWEEN
+    Выводит ID и тип абонементов  действие которых закончится в ноябре 2020 года
+    SELECT DISTINCT ID, type
+    FROM Abonements
+    WHERE validity BETWEEN '2020-11-01' AND '2020-11-30'
+
+3. Инструкция SELECT, использующая предикат LIKE:
+    Запрос аналогичный первому, но с использованием LIKE
+    SELECT DISTINCT Visitors.name,Visitors.sex, Abonements.type
+    FROM Visitors JOIN Abonements ON Abonements.ID = Visitors.IDcard
+    WHERE Visitors.sex LIKE '%f%'
+
+4. Инструкция SELECT, использующая предикат IN с вложенным подзапросом
+
+
