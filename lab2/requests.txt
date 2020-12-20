@@ -17,5 +17,51 @@
     WHERE Visitors.sex LIKE '%f%'
 
 4. Инструкция SELECT, использующая предикат IN с вложенным подзапросом
+Список абонементов типа 'platinum' использующихся в одном из залов с названием 'Mary'
+SELECT ID, IDgym, type, validity
+FROM Abonements
+WHERE IDgym IN
+(
+ SELECT IDgym
+ FROM Gyms
+ WHERE name = 'Mary'
+) AND type = 'platinum'
+
+5.Инструкция SELECT, использующая предикат EXISTS с вложенным подзапросом
+
+Список клиентов использующих карту типа gold
+SELECT visitors.id, visitors.name
+FROM visitors
+where exists(
+    SELECT visitors.id
+    FROM visitors JOIN abonements
+    ON visitors.idcard = abonements.id
+    where abonements.type = 'gold'
+          )
+
+6. Инструкция SELECT, использующая предикат сравнения с квантором.
+
+Список клиентов мужчин старше любой из женщин
+SELECT id, name, sex, age
+FROM visitors
+where sex = 'm' and age > ALL(
+    select age
+    from visitors
+    where sex = 'f'
+    )
+
+7. Инструкция SELECT, использующая агрегатные функции в выражениях
+столбцов.
+
+Средний возраст всех посетителей
+SELECT sum(age)/count(id) as "Average age"
+FROM (
+    SELECT age, id
+    FROM visitors
+    Group By age, id
+ ) AS AvgAge
+
+8. Инструкция SELECT, использующая скалярные подзапросы в выражениях
+столбцов.
 
 

@@ -20,7 +20,7 @@ cursor.execute('''CREATE TABLE Visitors(
                 IDcard int not null unique check (IDcard > 0),
                 name varchar(30) not null,
                 sex char,
-                age integer check (age>=14 and age <= 99))''')
+                age integer check (age>=14 and age <=100))''')
 
 cursor.execute('''CREATE TABLE Abonements(
                 ID int not null unique check (ID > 0),

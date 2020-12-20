@@ -1,0 +1,14 @@
+Select использующий предикат сравнения
+Вывести машины, марка которых audi
+SELECT DISTINCT Cars.ID, Cars.mark, Cars.registrationDate
+FROM Cars
+WHERE Cars.mark = 'audi'
+
+
+Выводит средний размре штрафа для марки audi
+SELECT Cars.mark,
+       AVG(Bills.penalty) OVER (ORDER BY Cars.mark) as AVGBill
+FROM Cars JOIN Drivers ON Drivers.ID = Cars.driverid
+    JOIN DB ON Drivers.ID = DB.DriverID
+    JOIN Bills On Bills.ID = DB.BillID
+WHERE Cars.mark = 'audi'
