@@ -1,4 +1,11 @@
-create function getvisitors(int) returns visitors as
+create function getvisitors(int) returns table(
+    ID int,
+    IDcard int,
+    name varchar,
+    gender char,
+    age integer
+                                              )
+as
 $$
 	select *
 	from visitors
@@ -6,6 +13,6 @@ $$
 $$ language sql;
 
 select *
-from getvisitors(18);
+from getvisitors(19);
 
 drop function getvisitors(int)

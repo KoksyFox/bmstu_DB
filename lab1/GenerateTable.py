@@ -35,14 +35,14 @@ def generate_cards():
     idCard = [i for i in range(N, N + MAX_N)]
     idCard = sample(idCard, MAX_N)
 
-    idGym = [i for i in range(MAX_N)]
+    idGym = [randint(1, MAX_N) for i in range(MAX_N)]
     idGym = sample(idGym, MAX_N)
     for i in range(MAX_N):
         line = "{0},{1},{2},{3}\n".format(
                                                   idCard[i],
                                                   idGym[i],                                                  
                                                   choice(cardType),
-                                                  faker.date_this_year())
+                                                  faker.date_between(start_date='-1y', end_date='+1y'))
         f.write(line)
     f.close()                                          
 

@@ -19,14 +19,14 @@ cursor.execute('''CREATE TABLE Visitors(
                 ID int not null unique check (ID > 0),
                 IDcard int not null unique check (IDcard > 0),
                 name varchar(30) not null,
-                sex char,
+                gender char,
                 age integer check (age>=14 and age <=100))''')
 
 cursor.execute('''CREATE TABLE Abonements(
                 ID int not null unique check (ID > 0),
-                IDgym int not null unique check(ID > 0),
+                IDgym int not null check(ID > 0),
                 type varchar(20),
-                validity varchar(50))''')
+                validity date )''')
 
 cursor.execute('''CREATE TABLE Gyms(
                 IDgym int not null unique check(IDgym > 0),
