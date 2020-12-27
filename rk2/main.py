@@ -13,56 +13,54 @@ cursor.close()
 conn = psycopg2.connect(dbname='rk2', user='postgres', host='localhost', password='12345678')
 cursor = conn.cursor()
 cursor.execute('''CREATE TABLE Drivers(
-                ID integer not null unique check (ID > 0),
-                identnum integer,
-                phone integer,
+                DriverID integer not null unique check (DriverID > 0),
+                DriverLicense integer unique ,
                 FIO varchar(30),
-                auto varchar(30))''')
+                phone integer)''')
 
 cursor.execute('''CREATE TABLE Cars(
-                ID integer not null unique check (ID > 0),
-                mark varchar(30),
+                CarID integer not null unique check (CarID > 0),
                 model varchar(30),
-                releaseDate varchar(30),
-                registrationDate varchar(30),
-                DriverID integer)''')
+                color varchar (30),
+                year varchar(30),
+                registrationDate date)''')
 
-cursor.execute('''CREATE TABLE Bills(
+cursor.execute('''CREATE TABLE Fines(
+                FineID integer not null unique check (FineID > 0),
+                DriverID integer not null check (DriverID > 0),
+                FineType varchar(30),
+                Amount integer,
+                FineDate date)''')
+
+cursor.execute('''CREATE TABLE DC(
                 ID integer not null unique check (ID > 0),
-                typeof varchar(30),
-                penalty integer,
-                warning varchar(30))''')
+                DriverID integer,
+                CarID integer)''')
 
-cursor.execute('''CREATE TABLE DB(
-                ID integer not null unique check (ID > 0),
-                DriverId integer,
-                BillID integer)''')
-
-cursor.execute("INSERT INTO Drivers (ID, identnum, phone, FIO, auto) VALUES (1, 133, 8345, 'Ivanov Ivan Ivanovich', 2)")
-cursor.execute("INSERT INTO Drivers (ID, identnum, phone, FIO, auto) VALUES (2, 129, 7695, 'Olegov Oleg Olegovich', 3)")
-cursor.execute("INSERT INTO Drivers (ID, identnum, phone, FIO, auto) VALUES (3, 103, 7915, 'Kirillov Kirill Kirilovich', 1)")
-cursor.execute("INSERT INTO Drivers (ID, identnum, phone, FIO, auto) VALUES (4, 221, 8916, 'Dimov Dmitry Dmitrivich', 4)")
-cursor.execute("INSERT INTO Drivers (ID, identnum, phone, FIO, auto) VALUES (5, 098, 7495, 'Androv Andrey Ivanovich', 5)")
+cursor.execute("INSERT INTO Drivers (DriverID, DriverLicense, FIO, phone) VALUES (1, 133, 'Ivanov Ivan Ivanovich', 9845)")
+cursor.execute("INSERT INTO Drivers (DriverID, DriverLicense, FIO, phone) VALUES (2, 129, 'Olegov Oleg Olegovich', 9854)")
+cursor.execute("INSERT INTO Drivers (DriverID, DriverLicense, FIO, phone) VALUES (3, 103, 'Kirillov Kirill Kirilovich', 8800)")
+cursor.execute("INSERT INTO Drivers (DriverID, DriverLicense, FIO, phone) VALUES (4, 221, 'Dimov Dmitry Dmitrivich', 7654)")
+cursor.execute("INSERT INTO Drivers (DriverID, DriverLicense, FIO, phone) VALUES (5, 098, 'Androv Andrey Ivanovich', 2323)")
 
 
-cursor.execute("INSERT INTO Cars (ID, mark, model, releaseDate, registrationDate, DriverID) VALUES (1, 'audi', 'c23', '05-10-2019', '05-05-2020', 3)")
-cursor.execute("INSERT INTO Cars (ID, mark, model, releaseDate, registrationDate, DriverID) VALUES (2, 'toyt', 'y212', '05-10-2019', '05-05-2020', 1)")
-cursor.execute("INSERT INTO Cars (ID, mark, model, releaseDate, registrationDate, DriverID) VALUES (3, 'dali', 'g12', '02-05-2019', '05-04-2020', 2)")
-cursor.execute("INSERT INTO Cars (ID, mark, model, releaseDate, registrationDate, DriverID) VALUES (4, 'audi', '03', '05-03-2018', '05-07-2020', 4)")
-cursor.execute("INSERT INTO Cars (ID, mark, model, releaseDate, registrationDate, DriverID) VALUES (5, 'dar', '12', '05-10-2016', '05-02-2020', 5)")
+cursor.execute("INSERT INTO Cars (CarID, model, color, year, registrationDate) VALUES (1, 'audi', 'red', '2017', '05-05-2020')")
+cursor.execute("INSERT INTO Cars (CarID, model, color, year, registrationDate) VALUES (2, 'toyota', 'white', '2016', '05-05-2020')")
+cursor.execute("INSERT INTO Cars (CarID, model, color, year, registrationDate) VALUES (3, 'reno', 'yellow', '2018', '02-04-2019')")
+cursor.execute("INSERT INTO Cars (CarID, model, color, year, registrationDate) VALUES (4, 'audi', 'red', '2016', '05-07-2018')")
+cursor.execute("INSERT INTO Cars (CarID, model, color, year, registrationDate) VALUES (5, 'hower', 'blue', '2013', '05-02-2020')")
 
-cursor.execute("INSERT INTO Bills (ID, typeof, penalty, warning) VALUES (1, 'type1', 100, 'war1')")
-cursor.execute("INSERT INTO Bills (ID, typeof, penalty, warning) VALUES (2, 'type2', 14, 'war1')")
-cursor.execute("INSERT INTO Bills (ID, typeof, penalty, warning) VALUES (3, 'type1', 12, 'war12')")
-cursor.execute("INSERT INTO Bills (ID, typeof, penalty, warning) VALUES (4, 'type5', 2, 'war132')")
-cursor.execute("INSERT INTO Bills (ID, typeof, penalty, warning) VALUES (5, 'type6', 54, 'war113')")
+cursor.execute("INSERT INTO Fines (FineID, DriverID, FineType, Amount, FineDate) VALUES (1, 2, 'type1', 2, '05-10-2020')")
+cursor.execute("INSERT INTO Fines (FineID, DriverID, FineType, Amount, FineDate) VALUES (2, 2, 'type2', 1, '05-10-2020')")
+cursor.execute("INSERT INTO Fines (FineID, DriverID, FineType, Amount, FineDate) VALUES (3, 4, 'type1', 12, '12-12-2019')")
+cursor.execute("INSERT INTO Fines (FineID, DriverID, FineType, Amount, FineDate) VALUES (4, 3, 'type5', 2, '05-07-2020')")
+cursor.execute("INSERT INTO Fines (FineID, DriverID, FineType, Amount, FineDate) VALUES (5, 4, 'type6', 1, '09-01-2020')")
 
-cursor.execute("INSERT INTO DB (ID, DriverID, BillID) VALUES (1, 2, 3)")
-cursor.execute("INSERT INTO DB (ID, DriverID, BillID) VALUES (2, 2, 1)")
-cursor.execute("INSERT INTO DB (ID, DriverID, BillID) VALUES (3, 4, 2)")
-cursor.execute("INSERT INTO DB (ID, DriverID, BillID) VALUES (4, 5, 4)")
-cursor.execute("INSERT INTO DB (ID, DriverID, BillID) VALUES (5, 5, 1)")
-cursor.execute("INSERT INTO DB (ID, DriverID, BillID) VALUES (6, 3, 1)")
+cursor.execute("INSERT INTO DC (ID, DriverID, CarID) VALUES (1, 1, 1)")
+cursor.execute("INSERT INTO DC (ID, DriverID, CarID) VALUES (2, 2, 3)")
+cursor.execute("INSERT INTO DC (ID, DriverID, CarID) VALUES (3, 2, 4)")
+cursor.execute("INSERT INTO DC (ID, DriverID, CarID) VALUES (4, 3, 2)")
+cursor.execute("INSERT INTO DC (ID, DriverID, CarID) VALUES (5, 5, 5)")
 
 
 conn.commit()
