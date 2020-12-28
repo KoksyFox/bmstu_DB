@@ -1,0 +1,47 @@
+create database test_rk3;
+
+create table workers(id int primary key, name varchar(30), birthday date, department varchar);
+create table statistics(worker_id int, date date, weekday varchar, time time, action int);
+alter table statistics add foreign key (worker_id) references workers(id);
+
+insert into workers(id, name, birthday, department) values (1, 'Иванов', '25-09-1990', 'IT');
+insert into workers(id, name, birthday, department) values (3, 'Иванов', '25-09-1990', 'IT');
+insert into workers(id, name, birthday, department) values (2, 'Петров', '12-11-1987', 'Бухгалтерия');
+
+insert into statistics(worker_id, date, weekday, time, action) values (1, current_date, 'Пятница', '9:00', 1);
+insert into statistics(worker_id, date, weekday, time, action) values (1, current_date, 'Пятница', '9:20', 2);
+insert into statistics(worker_id, date, weekday, time, action) values (1, current_date, 'Пятница', '9:25', 1);
+insert into statistics(worker_id, date, weekday, time, action) values (1, current_date, 'Пятница', '14:25', 2);
+insert into statistics(worker_id, date, weekday, time, action) values (2, current_date, 'Пятница', '9:05', 1);
+insert into statistics(worker_id, date, weekday, time, action) values (3, current_date, 'Пятница', '9:15', 1);
+insert into statistics(worker_id, date, weekday, time, action) values (2, current_date, 'Пятница', '12:15', 2);
+insert into statistics(worker_id, date, weekday, time, action) values (3, current_date, 'Пятница', '17:15', 2);
+
+create or replace function get_laters(arg_date date) returns int as $$
+begin
+    return (
+    select count(*)
+    from(
+        select count(*)
+        from statistics
+        where statistics.date = arg_date
+        group by worker_id
+        having min(time) > '9:00') as cnt);
+end;
+$$ language plpgsql;
+
+select get_laters(current_date);
+
+create or replace function count_time() returns table(id int, time time) as $$
+begin
+    return query
+    select sum(tm.lead)-sum(time)
+    from(
+    select worker_id, time, action, lead(time) over (partition by worker_id order by time)
+    from statistics
+    ) as tm
+    where action=1
+    group by worker_id;
+
+end;
+$$ language plpgsql;
