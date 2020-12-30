@@ -1,18 +1,21 @@
-create function getvisitors(int) returns table(
+--табличная функция
+-- возвращает таблицу с данными о посетителях заданного возраста
+create or replace function getvisitors(findage int) returns table(
     ID int,
     IDcard int,
     name varchar,
     gender char,
     age integer
-                                              )
+)
 as
 $$
+begin
+    return query
 	select *
 	from visitors
-	where age = $1;
-$$ language sql;
+	where visitors.age = findage;
+end;
+$$ language 'plpgsql';
 
 select *
-from getvisitors(19);
-
-drop function getvisitors(int)
+from getvisitors(21);
