@@ -3,22 +3,19 @@
     SELECT Visitors.name,Visitors.gender,Visitors.age, Abonements.type
     FROM Visitors JOIN Abonements ON Abonements.ID = Visitors.IDcard
     WHERE Visitors.gender = 'f' AND Visitors.age > 25;
--- Distinct - позволяет выбирать уникальные значения из бд
 
 --2. Инструкция SELECT, использующая предикат BETWEEN
 --    Выводит ID и тип абонементов  действие которых закончилось в ноябре 2020 года
     SELECT ID, type
     FROM Abonements
     WHERE validity BETWEEN '2020-11-01' AND '2020-11-30';
--- Предикат BETWEEN проверяет, попадают ли значения проверяемого выражения в диапазон,
--- задаваемый пограничными выражениями, соединяемыми служебным словом AND.
+
 
 --3. Инструкция SELECT, использующая предикат LIKE:
 --   Выводит список клиентов женсокго пола
     SELECT Visitors.name,Visitors.gender, Abonements.type
     FROM Visitors JOIN Abonements ON Abonements.ID = Visitors.IDcard
-    WHERE Visitors.gender LIKE 'f';
---% - означает, что может быть один или несколько символов, а - только один символ или число
+    WHERE Visitors.gender LIKE 'f'; -- '%f%'?
 
 --4. Инструкция SELECT, использующая предикат IN с вложенным подзапросом
 --Список абонементов типа 'platinum' использующихся в одном из залов с названием 'Mary'
@@ -30,25 +27,23 @@ WHERE IDgym IN
  FROM Gyms
  WHERE name = 'Mary'
 ) AND type = 'platinum';
---Предикат IN определяет, будет ли значение проверяемого выражения обнаружено в наборе значений,
--- который либо явно определен, либо получен с помощью табличного подзапроса.
+
 
 
 --5.Инструкция SELECT, использующая предикат EXISTS с вложенным подзапросом
 --Список клиентов использующих карту типа gold
 
-SELECT visitors.id, visitors.name
-FROM visitors
+SELECT count(*)
+FROM visitors v
 where exists(
-    SELECT visitors.id
-    FROM visitors JOIN abonements
-    ON visitors.idcard = abonements.id
-    where abonements.type = 'gold'
+    SELECT v.id
+    FROM abonements
+    where abonements.type = 'gold' and abonements.id = v.idcard
           );
--- Предикат языка SQL EXISTS возвращает истину, когда по запросу найдена одна или более строк,
--- соответствующих условию, и ложь, когда не найдено ни одной строки.
 
---6. Инструкция SELECT, использующая предикат сравнения с квантором.????
+
+
+--6. Инструкция SELECT, использующая предикат сравнения с квантором.
 --Список клиентов мужчин старше любой из женщин
 
 SELECT id, name, gender, age
@@ -67,9 +62,6 @@ FROM (
     FROM visitors
     Group By age, id
  ) AS AvgAge;
-
--- count - количество входных строк, для которых значение выражения не равно NULL
--- sum - сумма значений выражения по всем входным данным, отличным от NULL
 
 --8. Инструкция SELECT, использующая скалярные подзапросы в выражениях столбцов.
 
@@ -91,7 +83,6 @@ SELECT visitors.id, visitors.name,
         WHEN Extract(year from current_date) + 1 THEN 'Next year'
     END as "year of ending"
 FROM visitors join abonements on idcard = abonements.id;
--- Функция EXTRACT извлекает отдельные части из даты или даты-времени.
 
 --10. Инструкция SELECT, использующая поисковое выражение CASE.
 --Заканчивается ли действие абонемента в этом месяце
@@ -130,15 +121,19 @@ where ((validity - current_date) > 0) and ((validity - current_date) < 30);
 --Выводит список  посетителей зала с id = 144
 
 select visitors.id, visitors.name, t.CardType, t.GymAddress
-from (
+from(
      select type as CardType, GymAddress, id
-    from (
-         select address as GymAddress, idgym
-        from gyms
-        where idgym = 144
-             ) as GT
-    inner join abonements on Gt.idgym = abonements.idgym
-         ) as T
+     from (
+            select address as GymAddress, idgym
+            from gyms
+            where idgym in (
+                select idgym
+                from gyms
+                where address like '%Road%'
+                ) and idgym = 619 or idgym = 702
+          ) as GT
+     join abonements on Gt.idgym = abonements.idgym
+    ) as T
 inner join visitors on T.id = visitors.idcard;
 
 --14. Инструкция SELECT, консолидирующая данные с помощью предложения GROUP BY, но без предложения HAVING.
@@ -149,7 +144,7 @@ FROM visitors
 GROUP BY gender;
 
 --15. Инструкция SELECT, консолидирующая данные с помощью предложения GROUP BY и предложения HAVING.
---Запрос определяет у кого средний возраст больше у мужчин или женщин
+--Запрос определяет у кого средний возраст меньше у мужчин или женщин
 SELECT gender, Avg(age) as AvgAge
 FROM visitors
 GROUP BY gender
@@ -158,7 +153,6 @@ HAVING Avg(age) <
     SELECT AVG(age) AS AvgAge
     FROM visitors
 );
--- Команда HAVING позволяет фильтровать результат группировки, сделанной с помощью команды group by.
 
 --16. Однострочная инструкция INSERT, выполняющая вставку в таблицу одной
 --строки значений.
@@ -201,13 +195,13 @@ where age > 80;
 
 --21. Инструкция DELETE с вложенным коррелированным подзапросом в
 --предложении WHERE.
---Удаляет из базы данных всех клиентов,у которых действие абонемента закончилось больше месяца назад
+--Удаляет из базы данных всех клиентов возрастом от 14 до 25 лет,у которых действие абонемента закончилось больше месяца назад
 DELETE FROM visitors
 WHERE idcard IN
 (
  SELECT abonements.id
  FROM abonements
- WHERE (validity - current_date) < -30
+ WHERE ((validity - current_date) < -30) and age between 14 and 25
  );
 
 --22. Инструкция SELECT, использующая простое обобщенное табличное
